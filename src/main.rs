@@ -9,6 +9,8 @@ fn main() {
 
     disable_commit_signing(&mut args);
 
+    translate_input(&mut args);
+
     let args: Vec<&str> = args.iter().map(|s| s.as_ref()).collect();
 
     cmd("wsl.exe", args)
@@ -50,6 +52,21 @@ fn cmd(program: &str, args: Vec<&str>) {
 
     print!("{}", translate_paths(stdout));
     std::process::exit(0);
+}
+
+fn translate_input(args: &mut Vec<String>) {
+    for arg in args.iter_mut() {
+        if arg.starts_with("-") {
+            continue;
+        }
+
+        let translated = translate_input_paths(arg.to_string());
+        *arg = translated;
+    }
+}
+
+fn translate_input_paths(input: String) -> String {
+    input.replace("\\", "/")
 }
 
 fn translate_paths(input: String) -> String {
